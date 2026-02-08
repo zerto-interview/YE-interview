@@ -17,22 +17,18 @@
 2. Frontend User Admin Panel [ SB Admin 2 ](https://startbootstrap.com/theme/sb-admin-2).
 
 ### How to SETup in Windows/MAC/Linux
-1. Clone this Project <code>git clone https://github.com/yeazin/Multi-Authors-advanced-Django-Blog.git </code>
-2. Go to Project Directory <code>cd Multi-Authors-advanced-Django-Blog </code>
+1. Clone this Project <code>git clone https://github.com/einan202/YE-interview.git</code>
+2. Go to Project Directory <code>YE-interview</code>
 3. Create a Virtual Environment :-
-    * for Windows <code>python -m venv env </code>
-    * for Linux/Mac <code>python3 -m venv env </code>
-4. Activate Virtual Environment <code>source env/bin/activate </code>
-5. Install Requirment Packages <code>pip install -r requirments.txt</code>
+    * for Linux/Mac <code>python3.10 -m venv venv </code>
+4. Activate Virtual Environment <code>source venv/bin/activate </code>
+5. Install Requirment Packages <code>pip install -r requirements.txt</code>
 6. Migrate Database :-
-    * For Windows <code>py manage.py migrate</code>
-    * For Linux/Mac <code>python3 manage.py migrate</code>
+    * For Linux/Mac <code>python3.10 manage.py migrate</code>
 7. Create SuperUser :-
-    * For Windows <code>py manage.py createsuperuser</code>
-    * For Linux/Mac <code>python3 manage.py createsuperuser</code>
+    * For Linux/Mac <code>python3.10 manage.py createsuperuser</code>
 8. Finally Run the Projects :-
-    * For Windows <code>py manage.py runserver</code>
-    * For Linux/Mac <code>python3 manage.py runserver</code>
+    * For Linux/Mac <code>python3.10 manage.py runserver</code>
 
 ### Project Features : -
 
@@ -146,6 +142,7 @@ __Linkedin :__ [Yea Sin](https://www.linkedin.com/in/yeazin/)
 <br>
 
 [Go To Top ↑ ](#multiblogs---multi-authors-blog-project-in-djangopython)  
+
 
 
 

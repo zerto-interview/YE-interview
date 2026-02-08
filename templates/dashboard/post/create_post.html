@@ -1,0 +1,90 @@
+{% extends 'dashboard/base/base.html' %}
+{% block title %} Create Blog Post | Dashboard {% endblock %}
+{% block custom_css %} {% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+    {% if messages %}
+<div class="messages" >
+    {% for message in messages %}
+        <div class="alert alert-primary" {% if message.tags %}
+             class="{{ message.tags }}"{% endif %}>{{ message }}
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+        </div>
+
+    {% endfor %}
+</div>
+{% endif %}
+
+    <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Add Blog Post</h6>
+    </div>
+    <div class="row " style="padding: 20px;">
+      <div class="col-10 mx-auto">
+    <form action="{% url 'create_post' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Add Title </label>
+                <input type="text" id="title" class="form-control" placeholder="Add Blog Title" name="title" value="{{ title|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="detail">Blog Details</label>
+                <textarea class="form-control" id="detail" name="detail" rows="10" placeholder="Add Blog Details" required>{{ detail|default:'' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="customFile">Add Featured Image</label>
+                <input type="file" class="form-control" id="customFile"  name="image" />
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Category <span class="text-danger">*</span></label>
+                <select class="form-control" id="exampleFormControlSelect1" name="category" required>
+                  <option value=""> Select Category</option>
+                    {% for cat in category %}
+                  <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">Posts only appear on the main and category pages after a staff member publishes them.</small>
+              </div>
+                <button type="submit" name="status_action" value="draft" class="btn btn-secondary mr-2">
+                    Save as Draft
+                </button>
+                <button type="submit" name="status_action" value="pending" class="btn btn-primary">
+                    Submit for Review
+                </button>
+        </form>
+    </div>
+    </div>
+    
+
+
+
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+  
+  function filterFunction() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("myDropdown");
+    a = div.getElementsByTagName("a");
+    for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        a[i].style.display = "";
+      } else {
+        a[i].style.display = "none";
+      }
+    }
+  }
+</script>
+{% endblock %}

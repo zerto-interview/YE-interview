@@ -1,0 +1,385 @@
+{% extends 'home/base/base.html' %}
+{% block title %} {{post.title }} | Interview-Project {% endblock %}
+{% block body %}
+<div class="container">
+	<div class="jumbotron jumbotron-fluid mb-3 pl-0 pt-0 pb-0 bg-white position-relative">
+		<div class="h-100 tofront">
+			<div class="row justify-content-between">
+				<div class="col-md-6 pt-6 pb-6 pr-6 align-self-center">
+
+								
+			{% if messages %}
+			<div class="messages" >
+				{% for message in messages %}
+					<div class="alert alert-primary" {% if message.tags %}
+						 class="{{ message.tags }}"{% endif %}>{{ message }}
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						  </button>
+					</div>
+			
+				{% endfor %}
+			</div>
+			{% endif %}
+
+					<p class="text-uppercase font-weight-bold">
+						<a class="text-danger" href="{% url 'catagory' post.catagories.slug %}">{{ post.catagories }}</a>
+					</p>
+					<h1 class="display-4 secondfont mb-3 font-weight-bold">{{ post.title }}</h1>
+					<p class="mb-3">
+						 Analysts told CNBC that the currency could hit anywhere between $1.35-$1.40 if the deal gets passed through the U.K. parliament.
+					</p>
+					<div class="d-flex align-items-center">
+                    {% if p.author.author_image %}
+                        <img height="20" class="rounded-circle shadow" style="border-radius: 50%;" src="{{ p.author.author_image.url }}">
+                    {% else %}
+                        <img class="rounded-circle shadow" height="70" src="https://www.pngarts.com/files/11/Avatar-PNG-Transparent-Image.png" alt=""> 
+                    {% endif %}
+						<small class="ml-2">
+							<a class="text-dark" href="{% url 'author_profile' post.author.author.username %}">
+								{{ post.author.author.username }}
+							</a>
+							<span class="text-muted d-block">
+								{{post.created_at | timesince }} ago ;
+								{% if show_views_likes %}{{ display_visit_count }} total views · {{ weekly_total }} views {{ views_range_label|lower }}{% endif %}
+							</span>
+						</small>
+					</div>
+					{% if show_views_likes %}
+					<div class="mt-3">
+						{% if can_like %}
+							<div id="reactions"
+								data-post-id="{{ post.id }}"
+								data-like-url="{% url 'like' post.id %}">
+								<button type="button"
+									class="btn btn-sm reaction-btn {% if user_reaction == 'like' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+									data-reaction="like">👍</button>
+								<button type="button"
+									class="btn btn-sm reaction-btn {% if user_reaction == 'love' %}btn-danger{% else %}btn-outline-danger{% endif %}"
+									data-reaction="love">❤️</button>
+								<button type="button"
+									class="btn btn-sm reaction-btn {% if user_reaction == 'clap' %}btn-success{% else %}btn-outline-success{% endif %}"
+									data-reaction="clap">👏</button>
+								<button type="button"
+									class="btn btn-sm reaction-btn {% if user_reaction == 'insightful' %}btn-info{% else %}btn-outline-info{% endif %}"
+									data-reaction="insightful">💡</button>
+								<button type="button"
+									class="btn btn-sm reaction-btn {% if user_reaction == 'dislike' %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+									data-reaction="dislike">👎</button>
+								<span class="ml-2">
+									<span id="likes-count">{{ likes_count }}</span> likes
+								</span>
+							</div>
+						{% else %}
+							<span class="text-muted">
+								{{ likes_count }} likes
+							</span>
+						{% endif %}
+					</div>
+					{% endif %}
+				</div>
+				<div class="col-md-6 pr-0">
+					<img src="{{post.image_url }}">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="container pt-4 pb-4">
+	<div class="row justify-content-center">
+		<div class="col-lg-2 pr-4 mb-4 col-md-12">
+			<div class="sticky-top text-center">
+				<div class="text-muted">
+					Share this
+				</div>
+				<div class="share d-inline-block">
+					<!-- AddToAny BEGIN -->
+					<div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+						<a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+						<a class="a2a_button_facebook"></a>
+						<a class="a2a_button_twitter"></a>
+					</div>
+					<script async src="https://static.addtoany.com/menu/page.js"></script>
+					<!-- AddToAny END -->
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-8">
+			<article class="article-post">
+                <p>{{ post.detail }}</p>
+			</article>
+			<div class="border p-5 bg-lightblue">
+				<div class="row justify-content-between">
+					<div class="col-md-5 mb-2 mb-md-0">
+						<h5 class="font-weight-bold secondfont">Become a member</h5>
+						 Get the latest news right in your inbox. We never spam!
+					</div>
+					<div class="col-md-7">
+                        <form action="{% url 'subscribe' %}" method="POST">
+						<div class="row">
+                            
+                                {% csrf_token %}
+							<div class="col-md-12">
+								<input type="email" name='subscribe' class="form-control" placeholder="Enter your e-mail address" required>
+							</div>
+							<div class="col-md-12 mt-2">
+								<button type="submit" class="btn btn-success btn-block">Subscribe</button>
+							</div>
+                        
+						</div>
+                    </form>
+					</div>
+				</div>
+			</div>
+
+			{% if user.is_authenticated %}
+			<form style="margin-top:50px;" action="{% url 'comment' post.id  %}" method="POST">
+				{% csrf_token %}
+				<p class="text-muted small mb-2">Comment as <strong>{{ user.username }}</strong></p>
+				<div class="form-group">
+					<textarea class="form-control" name="body" id="exampleFormControlTextarea1" rows="4" placeholder="Write your comment..." required></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary btn-round">Submit Comment</button>
+			</form>
+			{% else %}
+			<p class="text-muted mt-4">You must <a href="{% url 'login' %}">log in</a> to comment on this post.</p>
+			{% endif %}
+			<br>
+
+
+				{% for p in comments  reversed %}
+				{% if forloop.counter|divisibleby:2 %}
+				<div style="border-radius: 10px; margin: 5px; padding: 25px; background-color: #d8d8d8; ">
+					<p><strong>{{ p.name }}</strong> at {{ p.created_at }}</p>
+					<p style="padding: 20px; background-color: #f1f1f1; border-radius: 7px; border:0.5px solid #c5c5c5">{{ p.body }}</p>
+				</div>
+				{% else %}
+				<div style="border-radius: 10px; margin: 5px; padding: 25px; background-color: #b3d3c0;">
+					<p><strong>{{ p.name }}</strong> at {{ p.created_at }}</p>
+					<p style="padding: 20px; background-color: #c5e6d3; border-radius: 7px; border:0.5px solid #c5c5c5">{{ p.body }}</p>
+				</div>
+				{% endif %}
+				{% endfor %}
+		</div>
+	</div>
+</div>
+
+
+
+<div class="container pt-4 pb-4">
+	<h5 class="font-weight-bold spanborder"><span>Read next</span></h5>
+	<div class="row">
+		{% if first %}
+		<div class="col-lg-6">
+			<div class="card border-0 mb-4 box-shadow h-xl-300">
+				<div style="background-image: url(./assets/img/demo/3.jpg); ">
+					<img src="{{ first.image_url }}" style="height: 200px; background-size: cover; background-repeat: no-repeat; width: 100%;" alt="">
+				</div>
+				<div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
+					<h2 class="h4 font-weight-bold">
+					<a class="text-dark" href="{% url 'single_blog' first.id %}"> {{ first.title }} </a>
+					</h2>
+					<p class="card-text">
+						{{ first.detail|truncatechars:150 }}
+					</p>
+					<div>
+						<small class="d-block">
+						{% if first.author.author_image %}
+						    <img height="20" class="rounded-circle shadow" style="border-radius: 50%;" src="{{ first.author.author_image.url }}">
+                        {% else %}
+                            <img class="rounded-circle shadow" height="20" src="https://www.pngarts.com/files/11/Avatar-PNG-Transparent-Image.png" alt="">
+                        {% endif %}
+						<a class="text-muted" href="{% url 'author_profile' first.author.author.username %}">{{ first.author.author.username }}</a></small>
+						<small class="text-muted">{{ first.created_at|timesince }} ago .  {{ first.visit_count }} views</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6">
+			{% endif %}
+			<div class="flex-md-row mb-4 box-shadow h-xl-300">
+				{% for p in last %}
+				<div class="mb-3 d-flex align-items-center">
+					<img height="80" src="{{p.image_url}}">
+					<div class="pl-3">
+						<h2 class="mb-2 h6 font-weight-bold">
+						<a class="text-dark" href="{% url 'single_blog' p.id %}">{{p.title}}</a>
+						</h2>
+						<div class="card-text text-muted small">
+						{% if p.author.author_image %}
+						    <img height="20" class="rounded-circle shadow" style="border-radius: 50%;" src="{{ p.author.author_image.url }}">
+                        {% else %}
+                            <img class="rounded-circle shadow" height="20" src="https://www.pngarts.com/files/11/Avatar-PNG-Transparent-Image.png" alt=""> 
+                        {% endif %}
+                        <a class="text-dark" href="{% url 'author_profile' p.author.author.username %}">
+							{{ p.author.author.username }}
+						</a> in <a class="text-dark" href="{% url 'catagory' p.catagories.slug %}">{{ p.catagories }} </a>
+						
+						</div>
+						<small class="text-muted">{{ p.created_at | timesince }} ago .  {{p.visit_count}} views</small>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		{% if first %}
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+{% if show_views_likes %}
+<!-- Views chart with range selector -->
+<div class="container pt-4 pb-4" id="post-views-chart-wrapper">
+	<div id="post-views-chart-container">
+		<div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
+			<h5 class="font-weight-bold spanborder mb-0"><span>Views</span></h5>
+			<div class="btn-group btn-group-sm js-views-range-btns" role="group">
+				<a href="?views_range=1" class="btn {% if views_range == '1' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Today</a>
+				<a href="?views_range=3" class="btn {% if views_range == '3' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Last 3 days</a>
+				<a href="?views_range=7" class="btn {% if views_range == '7' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Last 7 days</a>
+			</div>
+		</div>
+		<div class="d-flex align-items-end border rounded p-3 bg-light" style="height: 140px;">
+			{% for day in weekly_views %}
+				<div class="text-center mx-1 flex-grow-1 d-flex flex-column align-items-center justify-content-end" style="min-width: 0;">
+					<div class="mb-1" style="height: 80px; width: 100%; max-width: 48px; display: flex; align-items: flex-end; justify-content: center;">
+						<div class="rounded-top w-100" style="background: linear-gradient(180deg, #4e73df 0%, #224abe 100%); height: {{ day.height }}%; min-height: 4px;" title="{{ day.date|date:'M d' }}: {{ day.views }} views"></div>
+					</div>
+					<small class="d-block text-muted" style="font-size: 11px;">
+						{{ day.date|date:"D" }}<br><strong>{{ day.views }}</strong>
+					</small>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<script>
+(function() {
+    var wrapper = document.getElementById('post-views-chart-wrapper');
+    if (!wrapper) return;
+    wrapper.addEventListener('click', function(e) {
+        var a = e.target.closest('.js-views-range-btns a[href^="?"]');
+        if (!a) return;
+        e.preventDefault();
+        var url = a.getAttribute('href');
+        var range = (url.match(/views_range=([137])/) || [])[1];
+        if (!range) return;
+        var req = new XMLHttpRequest();
+        req.open('GET', window.location.pathname + url + '&partial=1');
+        req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        req.onload = function() {
+            if (req.status >= 200 && req.status < 300) {
+                document.getElementById('post-views-chart-container').innerHTML = req.responseText;
+                var btnGroup = wrapper.querySelector('.js-views-range-btns');
+                if (btnGroup) {
+                    btnGroup.querySelectorAll('a').forEach(function(link) {
+                        link.classList.toggle('btn-primary', link.getAttribute('href').indexOf('views_range=' + range) !== -1);
+                        link.classList.toggle('btn-outline-secondary', link.getAttribute('href').indexOf('views_range=' + range) === -1);
+                    });
+                }
+                history.replaceState(null, '', window.location.pathname + url);
+            }
+        };
+        req.send();
+    });
+})();
+</script>
+{% endif %}
+
+<!-- messages section -->
+
+<script>
+	(function () {
+		var reactionsWrapper = document.getElementById('reactions');
+		if (!reactionsWrapper) {
+			return;
+		}
+
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					var cookie = cookies[i].trim();
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+
+		function setActiveReaction(reaction) {
+			var buttons = reactionsWrapper.querySelectorAll('.reaction-btn');
+			buttons.forEach(function (btn) {
+				var r = btn.getAttribute('data-reaction');
+				btn.classList.remove('btn-primary', 'btn-outline-primary',
+					'btn-danger', 'btn-outline-danger',
+					'btn-success', 'btn-outline-success',
+					'btn-info', 'btn-outline-info',
+					'btn-secondary', 'btn-outline-secondary');
+
+				if (r === 'like') {
+					btn.classList.add(reaction === 'like' ? 'btn-primary' : 'btn-outline-primary');
+				} else if (r === 'love') {
+					btn.classList.add(reaction === 'love' ? 'btn-danger' : 'btn-outline-danger');
+				} else if (r === 'clap') {
+					btn.classList.add(reaction === 'clap' ? 'btn-success' : 'btn-outline-success');
+				} else if (r === 'insightful') {
+					btn.classList.add(reaction === 'insightful' ? 'btn-info' : 'btn-outline-info');
+				} else if (r === 'dislike') {
+					btn.classList.add(reaction === 'dislike' ? 'btn-secondary' : 'btn-outline-secondary');
+				}
+			});
+		}
+
+		reactionsWrapper.addEventListener('click', function (e) {
+			var target = e.target;
+			if (!target.classList.contains('reaction-btn')) {
+				return;
+			}
+			e.preventDefault();
+			var reaction = target.getAttribute('data-reaction');
+			var url = reactionsWrapper.getAttribute('data-like-url');
+			var csrftoken = getCookie('csrftoken');
+
+			var formData = new FormData();
+			formData.append('reaction', reaction);
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'X-CSRFToken': csrftoken,
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				body: formData,
+				credentials: 'same-origin'
+			})
+				.then(function (response) {
+					return response.json();
+				})
+				.then(function (data) {
+					if (typeof data.likes_count !== 'undefined') {
+						var likesCountEl = document.getElementById('likes-count');
+						if (likesCountEl) {
+							likesCountEl.textContent = data.likes_count;
+						}
+					}
+					if (data.reaction) {
+						setActiveReaction(data.reaction);
+					} else {
+						// no active reaction anymore
+						setActiveReaction(null);
+					}
+				})
+				.catch(function (error) {
+					console.error('Error toggling reaction:', error);
+				});
+		});
+	})();
+</script>
+
+{% endblock %}

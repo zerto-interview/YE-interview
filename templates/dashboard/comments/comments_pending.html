@@ -1,0 +1,74 @@
+{% extends 'dashboard/base/base.html' %}
+{% load humanize %}
+
+{% block title %}Pending Comments | Dashboard{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Pending Comments</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-primary" {% if message.tags %}class="{{ message.tags }}"{% endif %}>
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if comments %}
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Post</th>
+                                <th>Author</th>
+                                <th>Commenter</th>
+                                <th>Comment</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for comment in comments %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <a href="{% url 'post' comment.post.id %}">
+                                            {{ comment.post.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ comment.post.author.author.username }}</td>
+                                    <td>{{ comment.name }}</td>
+                                    <td>{{ comment.body|truncatechars:120 }}</td>
+                                    <td>{{ comment.created_at|naturaltime }}</td>
+                                    <td>
+                                        <form action="{% url 'comment_approve' comment.id %}" method="post" style="display:inline-block;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form action="{% url 'comment_delete' comment.id %}" method="post" style="display:inline-block;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>No pending comments at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

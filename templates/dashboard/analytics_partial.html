@@ -1,0 +1,52 @@
+{% load humanize %}
+{% for item in posts_data %}
+{% with post=item.post chart_days=item.chart_days reactions=item.reaction_counts %}
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h5 class="mb-1">
+                    <a href="{% url 'post' post.id %}">{{ post.title }}</a>
+                </h5>
+                <small class="text-muted">
+                    {{ post.created_at|naturalday }} · {{ post.visit_count }} total views · {{ item.period_total }} views {{ range_label|lower }}
+                </small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="font-weight-bold mb-2">Views ({{ range_label }})</h6>
+                <div class="d-flex align-items-end border rounded p-3 bg-light" style="height: 140px;">
+                    {% for day in chart_days %}
+                        <div class="text-center mx-1 flex-grow-1 d-flex flex-column align-items-center justify-content-end" style="min-width: 0;">
+                            <div class="mb-1" style="height: 80px; width: 100%; max-width: 48px; display: flex; align-items: flex-end; justify-content: center;">
+                                <div class="rounded-top w-100" style="background: linear-gradient(180deg, #4e73df 0%, #224abe 100%); height: {{ day.height }}%; min-height: 4px;" title="{{ day.date|date:'M d' }}: {{ day.views }} views"></div>
+                            </div>
+                            <small class="d-block text-muted" style="font-size: 11px;">
+                                {{ day.date|date:"D" }}<br><strong>{{ day.views }}</strong>
+                            </small>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6 class="font-weight-bold mb-2">Reactions</h6>
+                <ul class="list-unstyled mb-0">
+                    <li>👍 like: {{ reactions.like }}</li>
+                    <li>❤️ love: {{ reactions.love }}</li>
+                    <li>👏 clap: {{ reactions.clap }}</li>
+                    <li>💡 insightful: {{ reactions.insightful }}</li>
+                    <li>👎 dislike: {{ reactions.dislike }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+{% empty %}
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <p class="mb-0">No posts yet.</p>
+    </div>
+</div>
+{% endfor %}

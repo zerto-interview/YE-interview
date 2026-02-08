@@ -1,0 +1,20 @@
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
+	<h5 class="font-weight-bold spanborder mb-0"><span>Views</span></h5>
+	<div class="btn-group btn-group-sm js-views-range-btns" role="group">
+		<a href="?views_range=1" class="btn {% if views_range == '1' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Today</a>
+		<a href="?views_range=3" class="btn {% if views_range == '3' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Last 3 days</a>
+		<a href="?views_range=7" class="btn {% if views_range == '7' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Last 7 days</a>
+	</div>
+</div>
+<div class="d-flex align-items-end border rounded p-3 bg-light" style="height: 140px;">
+	{% for day in weekly_views %}
+		<div class="text-center mx-1 flex-grow-1 d-flex flex-column align-items-center justify-content-end" style="min-width: 0;">
+			<div class="mb-1" style="height: 80px; width: 100%; max-width: 48px; display: flex; align-items: flex-end; justify-content: center;">
+				<div class="rounded-top w-100" style="background: linear-gradient(180deg, #4e73df 0%, #224abe 100%); height: {{ day.height }}%; min-height: 4px;" title="{{ day.date|date:'M d' }}: {{ day.views }} views"></div>
+			</div>
+			<small class="d-block text-muted" style="font-size: 11px;">
+				{{ day.date|date:"D" }}<br><strong>{{ day.views }}</strong>
+			</small>
+		</div>
+	{% endfor %}
+</div>
